@@ -8,10 +8,11 @@ namespace MISA.WEB08.AMIS.API.Controllers
     /// Các api liên quan tới việc lấy dữ liệu chức vụ từ bảng positions trong database
     /// </summary>
     /// Created by : TNMANH (17/09/2022)
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class PositionsController : ControllerBase
     {
+        #region method GET
         /// <summary>
         /// Lấy danh sách tất cả các chức vụ
         /// </summary>
@@ -19,9 +20,9 @@ namespace MISA.WEB08.AMIS.API.Controllers
         /// <returns>Danh sách tất cả chức vụ</returns>
         [HttpGet]
         [Route("")]
-        public List<Position> GetAllPositions()
+        public IActionResult GetAllPositions()
         {
-            return new List<Position>
+            return StatusCode(StatusCodes.Status200OK, new List<Position>
             {
                 new Position
                 {
@@ -56,7 +57,8 @@ namespace MISA.WEB08.AMIS.API.Controllers
                     ModifiedDate = DateTime.Now,
                     ModifiedBy = "Phạm Thị Phương",
                 }
-            };
-        }
+            });
+        } 
+        #endregion
     }
 }

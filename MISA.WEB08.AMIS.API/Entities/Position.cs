@@ -6,6 +6,8 @@
     /// Created by : TNMANH (17/09/2022)
     public class Position
     {
+        #region Properties
+
         /// <summary>
         /// ID chức danh
         /// </summary>
@@ -44,6 +46,8 @@
         /// <summary>
         /// Người sửa gần nhất
         /// </summary>
-        public string ModifiedBy { get; set; }
+        public string ModifiedBy { get; set; } 
+
+        #endregion
     }
 }

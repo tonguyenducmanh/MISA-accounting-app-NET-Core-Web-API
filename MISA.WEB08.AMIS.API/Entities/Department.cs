@@ -6,6 +6,8 @@
     /// Created by : TNMANH (17/09/2022)
     public class Department
     {
+        #region Properties
+
         /// <summary>
         /// ID đơn vị
         /// </summary>
@@ -44,6 +46,8 @@
         /// <summary>
         /// Người sửa gần nhất
         /// </summary>
-        public string ModifiedBy { get; set; }
+        public string ModifiedBy { get; set; } 
+
+        #endregion
     }
 }
