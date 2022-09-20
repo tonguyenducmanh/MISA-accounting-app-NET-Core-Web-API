@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using MISA.WEB08.AMIS.API.Entities;
 using MISA.WEB08.AMIS.API.Entities.DTO;
 using MISA.WEB08.AMIS.API.Enums;
-using MISA.WEB08.AMIS.API.Resources;
 
 namespace MISA.WEB08.AMIS.API.Controllers
 {
@@ -11,21 +10,22 @@ namespace MISA.WEB08.AMIS.API.Controllers
     /// Danh sách các API liên quan tới dữ liệu nhân viên của bảng employee trong database
     /// </summary>
     /// Created by : TNMANH (17/09/2022)
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class EmployeesController : ControllerBase
     {
         // Danh sách các API liên quan tới việc lấy thông tin của nhân viên
         #region GetMethod
+
         /// <summary>
         /// API lấy danh sách toàn bộ nhân viên
         /// </summary>
         /// <returns>Danh sách nhân viên</returns>
         /// Created by : TNMANH (17/09/2022)
         [HttpGet("")]
-        public List<Employee> GetAllEmployees()
+        public IActionResult GetAllEmployees()
         {
-            return new List<Employee>
+            return StatusCode(StatusCodes.Status200OK, new List<Employee>
             {
                 new Employee
                 {
@@ -33,13 +33,13 @@ namespace MISA.WEB08.AMIS.API.Controllers
                     EmployeeCode = "NV001",
                     FullName = "Tô Nguyễn Đức Mạnh",
                     DateOfBirth = DateTime.Now,
-                    EmployeeGender = Gender.Male,
+                    Gender = Gender.Male,
                     EmployeeType = EmployeeType.Customer,
                     IdentityCard = "034200007684",
                     IdentityPlace = "CA Thái Bình",
                     Address = "Tổ dân phố Trung Tiến, Thị trấn Tiền Hải, Tiền Hải, Thái Bình",
-                    PNumRelative = "00981071321",
-                    PNumFix = "19001001",
+                    PhoneNumberRelative = "00981071321",
+                    PhoneNumberFix = "19001001",
                     Email = "Ducmanh1403200@gmail.com",
                     BankAccount = "1201012011",
                     BankName ="BIDV",
@@ -53,7 +53,7 @@ namespace MISA.WEB08.AMIS.API.Controllers
                     ModifiedDate = DateTime.Now,
                     ModifiedBy = "Nguyễn Hải Nam",
                 }
-            };
+            });
         }
 
         /// <summary>
@@ -61,10 +61,10 @@ namespace MISA.WEB08.AMIS.API.Controllers
         /// </summary>
         /// <returns>Mã nhân viên lớn nhất</returns>
         /// Created by : TNMANH (17/09/2022)
-        [HttpGet("/maxEmployeeCode")]
-        public string GetMaxEmployeeCode()
+        [HttpGet("max-code")]
+        public IActionResult GetMaxEmployeeCode()
         {
-            return "NV99999";
+            return StatusCode(StatusCodes.Status200OK, "NV99999");
         }
 
         /// <summary>
@@ -74,34 +74,34 @@ namespace MISA.WEB08.AMIS.API.Controllers
         /// <returns>Thông tin của nhân viên theo ID</returns>
         /// Created by : TNMANH (17/09/2022)
         [HttpGet("{employeeID}")]
-        public Employee GetEmployeeByID([FromRoute] Guid employeeID)
+        public IActionResult GetEmployeeByID([FromRoute] Guid employeeID)
         {
-            return new Employee
-                {
-                    EmployeeID = employeeID,
-                    EmployeeCode = "NV001",
-                    FullName = "Tô Nguyễn Đức Mạnh",
-                    DateOfBirth = DateTime.Now,
-                    EmployeeGender = Gender.Male,
-                    EmployeeType = EmployeeType.Customer,
-                    IdentityCard = "034200007684",
-                    IdentityPlace = "CA Thái Bình",
-                    Address = "Tổ dân phố Trung Tiến, Thị trấn Tiền Hải, Tiền Hải, Thái Bình",
-                    PNumRelative = "00981071321",
-                    PNumFix = "19001001",
-                    Email = "Ducmanh1403200@gmail.com",
-                    BankAccount = "1201012011",
-                    BankName = "BIDV",
-                    BankBranch = "Chi nhánh Cầu Giấy",
-                    DepartmentID = Guid.NewGuid(),
-                    DepartmentName = "Phòng Công Nghệ Thông Tin",
-                    PositionID = Guid.NewGuid(),
-                    PositionName = "Giám đốc công nghệ",
-                    CreatedDate = DateTime.Now,
-                    CreatedBy = "Liễu Thị Oanh",
-                    ModifiedDate = DateTime.Now,
-                    ModifiedBy = "Nguyễn Hải Nam",
-                };
+            return StatusCode(StatusCodes.Status200OK, new Employee
+            {
+                EmployeeID = employeeID,
+                EmployeeCode = "NV001",
+                FullName = "Tô Nguyễn Đức Mạnh",
+                DateOfBirth = DateTime.Now,
+                Gender = Gender.Male,
+                EmployeeType = EmployeeType.Customer,
+                IdentityCard = "034200007684",
+                IdentityPlace = "CA Thái Bình",
+                Address = "Tổ dân phố Trung Tiến, Thị trấn Tiền Hải, Tiền Hải, Thái Bình",
+                PhoneNumberRelative = "00981071321",
+                PhoneNumberFix = "19001001",
+                Email = "Ducmanh1403200@gmail.com",
+                BankAccount = "1201012011",
+                BankName = "BIDV",
+                BankBranch = "Chi nhánh Cầu Giấy",
+                DepartmentID = Guid.NewGuid(),
+                DepartmentName = "Phòng Công Nghệ Thông Tin",
+                PositionID = Guid.NewGuid(),
+                PositionName = "Giám đốc công nghệ",
+                CreatedDate = DateTime.Now,
+                CreatedBy = "Liễu Thị Oanh",
+                ModifiedDate = DateTime.Now,
+                ModifiedBy = "Nguyễn Hải Nam",
+            });
         }
 
         /// <summary>
@@ -112,13 +112,13 @@ namespace MISA.WEB08.AMIS.API.Controllers
         /// <param name="offset">Start Index của bảng</param>
         /// <returns>Tổng số bản ghi, tổng số trang, số trang hiện tại, danh sách kết quả</returns>
         [HttpGet("filter")]
-        public PagingData FilterEmployee(
+        public IActionResult FilterEmployee(
             [FromQuery] string? keyword,
             [FromQuery] int? limit,
             [FromQuery] int? offset
             )
         {
-            return new PagingData
+            return StatusCode(StatusCodes.Status200OK, new PagingData
             {
                 TotalCount = 100,
                 PageSize = limit,
@@ -131,13 +131,13 @@ namespace MISA.WEB08.AMIS.API.Controllers
                         EmployeeCode = "NV001",
                         FullName = "Tô Nguyễn Đức Mạnh",
                         DateOfBirth = DateTime.Now,
-                        EmployeeGender = Gender.Male,
+                        Gender = Gender.Male,
                         EmployeeType = EmployeeType.Customer,
                         IdentityCard = "034200007684",
                         IdentityPlace = "CA Thái Bình",
                         Address = "Tổ dân phố Trung Tiến, Thị trấn Tiền Hải, Tiền Hải, Thái Bình",
-                        PNumRelative = "00981071321",
-                        PNumFix = "19001001",
+                        PhoneNumberRelative = "00981071321",
+                        PhoneNumberFix = "19001001",
                         Email = "Ducmanh1403200@gmail.com",
                         BankAccount = "1201012011",
                         BankName = "BIDV",
@@ -152,8 +152,9 @@ namespace MISA.WEB08.AMIS.API.Controllers
                         ModifiedBy = "Nguyễn Hải Nam",
                     }
                 }
-            };
+            });
         }
+
         #endregion
 
         // Danh sách các API liên quan tới việc tạo mới nhân viên
@@ -185,14 +186,7 @@ namespace MISA.WEB08.AMIS.API.Controllers
         [HttpPut("{employeeID}")]        
         public IActionResult UpdateEmployee([FromRoute] Guid employeeID, [FromBody] Employee employee)
         {
-            try
-            {
-                return StatusCode(StatusCodes.Status200OK, employeeID);
-            }
-            catch
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, employeeID);
-            }
+            return StatusCode(StatusCodes.Status200OK, employeeID);
         }
 
         #endregion
@@ -208,14 +202,7 @@ namespace MISA.WEB08.AMIS.API.Controllers
         [HttpDelete("{employeeID}")]
         public IActionResult DeleteEmployee([FromRoute] Guid employeeID)
         {
-            try
-            {
-                return StatusCode(StatusCodes.Status200OK, employeeID);
-            }
-            catch
-            {
-                return StatusCode(StatusCodes.Status405MethodNotAllowed, employeeID);
-            }
+            return StatusCode(StatusCodes.Status200OK, employeeID);
         }
 
         #endregion

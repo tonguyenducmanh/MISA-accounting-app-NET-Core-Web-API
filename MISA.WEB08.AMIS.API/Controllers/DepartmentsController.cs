@@ -8,10 +8,11 @@ namespace MISA.WEB08.AMIS.API.Controllers
     /// Các API liên quan tới việc lấy dữ liệu của bảng đơn vị trong database
     /// </summary>
     /// Created by : TNMANH (17/09/2022)
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class DepartmentsController : ControllerBase
     {
+        #region method GET
         /// <summary>
         /// API lấy danh sách toàn bộ đơn vị
         /// </summary>
@@ -19,9 +20,9 @@ namespace MISA.WEB08.AMIS.API.Controllers
         /// Created by : TNMANH (17/09/2022)
         [HttpGet]
         [Route("")]
-        public List<Department> GetAllDepartments()
+        public IActionResult GetAllDepartments()
         {
-            return new List<Department>
+            return StatusCode(StatusCodes.Status200OK, new List<Department>
             {
                 new Department
                 {
@@ -45,7 +46,8 @@ namespace MISA.WEB08.AMIS.API.Controllers
                     ModifiedDate  = DateTime.Now,
                     ModifiedBy = "Nguyễn Hải Nam",
                 }
-            };
-        }
+            });
+        } 
+        #endregion
     }
 }

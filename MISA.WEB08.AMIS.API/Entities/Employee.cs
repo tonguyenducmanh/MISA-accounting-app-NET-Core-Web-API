@@ -8,6 +8,8 @@ namespace MISA.WEB08.AMIS.API.Entities
     /// Created by : TNMANH (17/09/2022)
     public class Employee
     {
+        #region Properties
+
         /// <summary>
         /// ID của nhân viên
         /// </summary>
@@ -31,7 +33,7 @@ namespace MISA.WEB08.AMIS.API.Entities
         /// <summary>
         /// Giới tính của nhân viên
         /// </summary>
-        public Gender EmployeeGender { get; set; }
+        public Gender Gender { get; set; }
 
         /// <summary>
         /// Loại nhân viên
@@ -56,12 +58,12 @@ namespace MISA.WEB08.AMIS.API.Entities
         /// <summary>
         /// Số điện thoại di động của nhân viên
         /// </summary>
-        public string PNumRelative { get; set; }
+        public string PhoneNumberRelative { get; set; }
 
         /// <summary>
         /// Số điện thoại cố định của nhân viên
         /// </summary>
-        public string PNumFix { get; set; }
+        public string PhoneNumberFix { get; set; }
 
         /// <summary>
         /// Địa chỉ Email của nhân viên
@@ -96,7 +98,7 @@ namespace MISA.WEB08.AMIS.API.Entities
         /// <summary>
         /// ID của chức danh
         /// </summary>
-        public Guid PositionID { get; set;   }
+        public Guid PositionID { get; set; }
 
         /// <summary>
         /// Tên chức danh
@@ -121,6 +123,8 @@ namespace MISA.WEB08.AMIS.API.Entities
         /// <summary>
         /// Người sửa gần nhất
         /// </summary>
-        public string ModifiedBy { get; set; }
+        public string ModifiedBy { get; set; } 
+
+        #endregion
     }
 }
