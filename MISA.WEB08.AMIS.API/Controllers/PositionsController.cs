@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Dapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MISA.Web08.AMIS.API.Entities.DTO;
+using MISA.Web08.AMIS.API.Enums;
 using MISA.WEB08.AMIS.API.Entities;
+using MySqlConnector;
 
 namespace MISA.WEB08.AMIS.API.Controllers
 {
@@ -22,42 +26,42 @@ namespace MISA.WEB08.AMIS.API.Controllers
         [Route("")]
         public IActionResult GetAllPositions()
         {
-            return StatusCode(StatusCodes.Status200OK, new List<Position>
+            try
             {
-                new Position
-                {
-                    PositionID = Guid.NewGuid(),
-                    PositionCode = "P001",
-                    PositionName = "Giám đốc",
-                    Description = "Đây là mô tả về vị trí giám đốc",
-                    CreatedDate = DateTime.Now,
-                    CreatedBy = "Liễu Thị Oanh",
-                    ModifiedDate = DateTime.Now,
-                    ModifiedBy = "Trần Xuân Bảo",
-                },
-                new Position
-                {
-                    PositionID = Guid.NewGuid(),
-                    PositionCode = "P002",
-                    PositionName = "Chủ tịch",
-                    Description = "Đây là mô tả về vị trí chủ tịch",
-                    CreatedDate = DateTime.Now,
-                    CreatedBy = "Liễu Thị Oanh",
-                    ModifiedDate = DateTime.Now,
-                    ModifiedBy = "Phạm Thị Phương",
-                },
-                new Position
-                {
-                    PositionID = Guid.NewGuid(),
-                    PositionCode = "P003",
-                    PositionName = "Trưởng phòng",
-                    Description = "Đây là mô tả về vị trí trưởng phòng",
-                    CreatedDate = DateTime.Now,
-                    CreatedBy = "Liễu Thị Oanh",
-                    ModifiedDate = DateTime.Now,
-                    ModifiedBy = "Phạm Thị Phương",
-                }
-            });
+                // Tạo ra connection string
+                string connectionString = "" +
+                       "Server = localhost;" +
+                       "Port = 5060;" +
+                       "Database = misa.web08.gpbl.tnmanh;" +
+                       "User Id = root;" +
+                       "Password = 140300;";
+                var sqlConnection = new MySqlConnection(connectionString);
+
+                // Chuẩn bị câu lệnh MySQL
+                string storeProcedureName = "Proc_positions_GetAll";
+
+                // Thực hiện gọi vào Database
+                var positions = sqlConnection.Query<Positions>(
+                    storeProcedureName,
+                    commandType: System.Data.CommandType.StoredProcedure
+                    );
+
+                // Trả về status code và mảng kết quả
+                return StatusCode(StatusCodes.Status200OK, positions);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                // Trả về status lỗi kèm theo object thông báo lỗi ErrorResult
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult(
+                    ErrorCode.Exception,
+                    "Has error when try to request to server.",
+                    "Có lỗi xảy ra, vui lòng liên hệ với MISA",
+                    "https://openapu.google.com/errorcode/e001",
+                    HttpContext.TraceIdentifier
+                    ));
+            }
         } 
         #endregion
     }
