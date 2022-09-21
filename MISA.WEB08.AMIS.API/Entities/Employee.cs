@@ -48,7 +48,7 @@ namespace MISA.WEB08.AMIS.API.Entities
         /// <summary>
         /// Ngày cấp Căn cước công dân / chứng minh thư
         /// </summary>
-        public string IdentityDate { get; set; }
+        public DateTime IdentityDate { get; set; }
 
         /// <summary>
         /// Nơi cấp căn cước công dân / chứng minh thư
