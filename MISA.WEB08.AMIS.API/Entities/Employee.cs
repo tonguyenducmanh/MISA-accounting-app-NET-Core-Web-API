@@ -46,6 +46,11 @@ namespace MISA.WEB08.AMIS.API.Entities
         public string IdentityCard { get; set; }
 
         /// <summary>
+        /// Ngày cấp Căn cước công dân / chứng minh thư
+        /// </summary>
+        public string IdentityDate { get; set; }
+
+        /// <summary>
         /// Nơi cấp căn cước công dân / chứng minh thư
         /// </summary>
         public string IdentityPlace { get; set; }
