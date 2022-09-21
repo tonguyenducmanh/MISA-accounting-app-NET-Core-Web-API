@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Dapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MISA.Web08.AMIS.API.Entities.DTO;
+using MISA.Web08.AMIS.API.Enums;
 using MISA.WEB08.AMIS.API.Entities;
+using MySqlConnector;
 
 namespace MISA.WEB08.AMIS.API.Controllers
 {
@@ -22,32 +26,45 @@ namespace MISA.WEB08.AMIS.API.Controllers
         [Route("")]
         public IActionResult GetAllDepartments()
         {
-            return StatusCode(StatusCodes.Status200OK, new List<Department>
+            try
             {
-                new Department
-                {
-                    DepartmentID = Guid.NewGuid(),
-                    DepartmentCode = "D001",
-                    DepartmentName = "Phòng hành chính",
-                    Description = "Đây là phần mô tả của phòng hành chính",
-                    CreatedDate = DateTime.Now,
-                    CreatedBy = "Nguyễn Hải Long",
-                    ModifiedDate  = DateTime.Now,
-                    ModifiedBy = "Tô Nguyễn Đức Mạnh",
-                },
-                new Department
-                {
-                    DepartmentID = Guid.NewGuid(),
-                    DepartmentCode = "D002",
-                    DepartmentName = "Phòng nhân sự",
-                    Description = "Đây là phần mô tả của phòng nhân sự",
-                    CreatedDate = DateTime.Now,
-                    CreatedBy = "Nguyễn Hải Long",
-                    ModifiedDate  = DateTime.Now,
-                    ModifiedBy = "Nguyễn Hải Nam",
-                }
-            });
-        } 
+                // Tạo connection string
+                string connectionString = "" +
+                        "Server = localhost;" +
+                        "Port = 5060;" +
+                        "Database = misa.web08.gpbl.tnmanh;" +
+                        "User Id = root;" +
+                        "Password = 140300;";
+                var sqlConnection = new MySqlConnection(connectionString);
+
+                // Chuẩn bị câu lệnh MySQL
+                string storeProcedureName = "Proc_department_GetAll";
+
+                // Thực hiện gọi vào Database
+                var departments = sqlConnection.Query<Department>(
+                    storeProcedureName,
+                    commandType: System.Data.CommandType.StoredProcedure
+                    );
+
+                // Trả về status code và mảng kết quả
+                return StatusCode(StatusCodes.Status200OK, departments);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                // Trả về status lỗi kèm theo object thông báo lỗi ErrorResult
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult
+                    (
+                    ErrorCode.Exception,
+                    "Has error when try to request to server.",
+                    "Có lỗi xảy ra, vui lòng liên hệ với MISA.",
+                    "https://openapi.google.com/errorcode/e001",
+                    HttpContext.TraceIdentifier
+                    ));
+            }
+
+        }
         #endregion
     }
 }

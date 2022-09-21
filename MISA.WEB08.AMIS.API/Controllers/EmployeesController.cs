@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using MISA.Web08.AMIS.API.Enums;
+using MISA.Web08.AMIS.API.Entities.DTO;
 using MISA.WEB08.AMIS.API.Entities;
 using MISA.WEB08.AMIS.API.Entities.DTO;
 using MISA.WEB08.AMIS.API.Enums;
+using MySqlConnector;
 
 namespace MISA.WEB08.AMIS.API.Controllers
 {
@@ -25,35 +28,43 @@ namespace MISA.WEB08.AMIS.API.Controllers
         [HttpGet("")]
         public IActionResult GetAllEmployees()
         {
-            return StatusCode(StatusCodes.Status200OK, new List<Employee>
+
+            try
             {
-                new Employee
-                {
-                    EmployeeID = Guid.NewGuid(),
-                    EmployeeCode = "NV001",
-                    FullName = "Tô Nguyễn Đức Mạnh",
-                    DateOfBirth = DateTime.Now,
-                    Gender = Gender.Male,
-                    EmployeeType = EmployeeType.Customer,
-                    IdentityCard = "034200007684",
-                    IdentityPlace = "CA Thái Bình",
-                    Address = "Tổ dân phố Trung Tiến, Thị trấn Tiền Hải, Tiền Hải, Thái Bình",
-                    PhoneNumberRelative = "00981071321",
-                    PhoneNumberFix = "19001001",
-                    Email = "Ducmanh1403200@gmail.com",
-                    BankAccount = "1201012011",
-                    BankName ="BIDV",
-                    BankBranch = "Chi nhánh Cầu Giấy",
-                    DepartmentID = Guid.NewGuid(),
-                    DepartmentName = "Phòng Công Nghệ Thông Tin",
-                    PositionID = Guid.NewGuid(),
-                    PositionName = "Giám đốc công nghệ",
-                    CreatedDate = DateTime.Now,
-                    CreatedBy = "Liễu Thị Oanh",
-                    ModifiedDate = DateTime.Now,
-                    ModifiedBy = "Nguyễn Hải Nam",
-                }
-            });
+                // Tạo connection string
+                string connectionString = "" +
+                    "Server = localhost;" +
+                    "Port = 5060;" +
+                    "Database = misa.web08.gpbl.tnmanh;" +
+                    "User Id = root;" +
+                    "Password = 140300;";
+                var sqlConnection = new MySqlConnection(connectionString);
+
+                // chuẩn bị câu lệnh MySQL
+                string storeProcedureName = "Proc_employee_GetAll";
+
+
+                // thực hiện gọi vào DB
+                var employees = sqlConnection.Query<Employee>(
+                    storeProcedureName
+                    , commandType: System.Data.CommandType.StoredProcedure
+                    );
+
+
+                return StatusCode(StatusCodes.Status200OK, employees);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult
+                (
+                    ErrorCode.Exception,
+                   "It was not posible to connect to the redis server(s)",
+                    "Có lỗi xảy ra, vui lòng liên hệ với MISA.",
+                    "https://openapi.misa.com.vn/errorcode/e001",
+                     HttpContext.TraceIdentifier
+                ));
+            }
         }
 
         /// <summary>
@@ -64,7 +75,43 @@ namespace MISA.WEB08.AMIS.API.Controllers
         [HttpGet("max-code")]
         public IActionResult GetMaxEmployeeCode()
         {
-            return StatusCode(StatusCodes.Status200OK, "NV99999");
+            try
+            {
+                // Tạo connection string
+                string connectionString = "" +
+                "Server = localhost;" +
+                "Port = 5060;" +
+                "Database = misa.web08.gpbl.tnmanh;" +
+                "User Id = root;" +
+                "Password = 140300;";
+
+                var sqlConnection = new MySqlConnection(connectionString);
+
+                // Chuẩn bị câu lệnh Query
+                string storeProcedureName = "Proc_employee_GetMaxCode";
+
+                // Thực hiện gọi vào Database
+                var maxCode = sqlConnection.QueryFirstOrDefault<String>(
+                    storeProcedureName,
+                    commandType: System.Data.CommandType.StoredProcedure
+                    );
+
+                // Trả về Status code và kết quả
+                return StatusCode(StatusCodes.Status200OK, maxCode);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                // Trả về Status code và object báo lỗi
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult(
+                    ErrorCode.Exception,
+                    "Has error for this request",
+                    "Có lỗi xảy ra, vui lòng liên hệ với MISA",
+                    "https://openapi.google.com/api/errorcode/e001",
+                    HttpContext.TraceIdentifier
+                    ));
+            }
         }
 
         /// <summary>
@@ -169,7 +216,63 @@ namespace MISA.WEB08.AMIS.API.Controllers
         [HttpPost]
         public IActionResult InsertEmployee([FromBody] Employee employee)
         {
-            return StatusCode(StatusCodes.Status201Created, employee.EmployeeID);
+            try
+            {
+                // khởi tạo kết nối với DB MySQL
+                string connectionString = "" +
+                    "Server = localhost;" +
+                    "Port = 5060;" +
+                    "Database = misa.web08.gpbl.tnmanh;" +
+                    "User Id = root;" +
+                    "Password = 140300;";
+                var sqlConnection = new MySqlConnection(connectionString);
+
+                // khai báo tên procedure Insert
+                var storeProcedureName = "Prop_employee_Insert";
+                // chuẩn bị tham số đầu vào cho procedure
+                var parameters = new DynamicParameters();
+                var tempEmployeeInsertID = Guid.NewGuid();
+                parameters.Add("v_EmployeeID", tempEmployeeInsertID);
+                parameters.Add("v_EmployeeCode", employee.EmployeeCode);
+                // Thực hiện gọi vào db để chạy procedure
+                var numberOfAffectedRows = sqlConnection.Execute(
+                    storeProcedureName,
+                    parameters,
+                    commandType: System.Data.CommandType.StoredProcedure
+                );
+                // xử lý dữ liệu trả về
+                if (numberOfAffectedRows > 0)
+                {
+                    // thành công
+                    return StatusCode(StatusCodes.Status201Created, tempEmployeeInsertID);
+                }
+                else
+                {
+                    // thất bại
+                    return StatusCode(StatusCodes.Status400BadRequest, new ErrorResult
+                (
+                    ErrorCode.InsertFailed,
+                   "Insert to database return 0",
+                    "Thêm mới nhân viên thất bại",
+                    "https://openapi.misa.com.vn/errorcode/e001",
+                     HttpContext.TraceIdentifier
+                ));
+                }
+
+                return StatusCode(StatusCodes.Status201Created, employee.EmployeeID);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult
+                (
+                    ErrorCode.Exception,
+                   "It was not posible to connect to the redis server(s)",
+                    "Có lỗi xảy ra, vui lòng liên hệ với MISA.",
+                    "https://openapi.misa.com.vn/errorcode/e001",
+                     HttpContext.TraceIdentifier
+                ));
+            }
         }
 
         #endregion
@@ -183,7 +286,7 @@ namespace MISA.WEB08.AMIS.API.Controllers
         /// <param name="employee">Giá trị sửa</param>
         /// <returns>Status 200 OK, employeeID / Status 400 badrequest</returns>
         /// Created by : TNMANH (17/09/2022)
-        [HttpPut("{employeeID}")]        
+        [HttpPut("{employeeID}")]
         public IActionResult UpdateEmployee([FromRoute] Guid employeeID, [FromBody] Employee employee)
         {
             return StatusCode(StatusCodes.Status200OK, employeeID);

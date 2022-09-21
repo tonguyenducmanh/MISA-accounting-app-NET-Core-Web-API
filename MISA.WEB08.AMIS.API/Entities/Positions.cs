@@ -4,7 +4,7 @@
     /// Thực thể chức danh map với bảng Positions trong database
     /// </summary>
     /// Created by : TNMANH (17/09/2022)
-    public class Position
+    public class Positions
     {
         #region Properties
 
