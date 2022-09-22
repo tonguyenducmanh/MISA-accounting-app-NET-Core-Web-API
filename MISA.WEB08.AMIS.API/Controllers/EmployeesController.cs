@@ -123,32 +123,49 @@ namespace MISA.WEB08.AMIS.API.Controllers
         [HttpGet("{employeeID}")]
         public IActionResult GetEmployeeByID([FromRoute] Guid employeeID)
         {
-            return StatusCode(StatusCodes.Status200OK, new Employee
+            try
             {
-                EmployeeID = employeeID,
-                EmployeeCode = "NV001",
-                FullName = "Tô Nguyễn Đức Mạnh",
-                DateOfBirth = DateTime.Now,
-                Gender = Gender.Male,
-                EmployeeType = EmployeeType.Customer,
-                IdentityCard = "034200007684",
-                IdentityPlace = "CA Thái Bình",
-                Address = "Tổ dân phố Trung Tiến, Thị trấn Tiền Hải, Tiền Hải, Thái Bình",
-                PhoneNumberRelative = "00981071321",
-                PhoneNumberFix = "19001001",
-                Email = "Ducmanh1403200@gmail.com",
-                BankAccount = "1201012011",
-                BankName = "BIDV",
-                BankBranch = "Chi nhánh Cầu Giấy",
-                DepartmentID = Guid.NewGuid(),
-                DepartmentName = "Phòng Công Nghệ Thông Tin",
-                PositionID = Guid.NewGuid(),
-                PositionName = "Giám đốc công nghệ",
-                CreatedDate = DateTime.Now,
-                CreatedBy = "Liễu Thị Oanh",
-                ModifiedDate = DateTime.Now,
-                ModifiedBy = "Nguyễn Hải Nam",
-            });
+                // Tạo connection String
+                string connectionString = "" +
+                    "Server = localhost;" +
+                    "Port = 5060;" +
+                    "Database = misa.web08.gpbl.tnmanh;" +
+                    "User Id = root;" +
+                    "Password = 140300;";
+                var sqlConnection = new MySqlConnection(connectionString);
+
+                // Khai báo procedure name
+                string storeProcedureName = "Proc_employee_GetOne";
+
+                // Khởi tạo các parameter để chèn vào trong storeprocedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("v_id", employeeID);
+
+                // Thực hiện kết nối tới Database
+                var employee = sqlConnection.QueryFirstOrDefault<Employee>(
+                    storeProcedureName,
+                    parameters,
+                    commandType: System.Data.CommandType.StoredProcedure
+                    );
+
+                // Trả về status code và kết quả trả về
+                return StatusCode(StatusCodes.Status200OK, employee);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                // Trả về status code kèm theo kết quả báo lỗi
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult(
+                    ErrorCode.Exception,
+                    "Has error with server",
+                    "Có lỗi xảy ra, vui lòng liên hệ với MISA",
+                    "https://openapi.google.com/api/error-code/e001",
+                    HttpContext.TraceIdentifier
+                    ));
+            }
+
         }
 
         /// <summary>
@@ -165,41 +182,57 @@ namespace MISA.WEB08.AMIS.API.Controllers
             [FromQuery] int? offset
             )
         {
-            return StatusCode(StatusCodes.Status200OK, new PagingData
+            try
             {
-                TotalCount = 100,
-                PageSize = limit,
-                PageNumber = 1,
-                Data = new List<Employee>
+                // Tạo connection string
+                string connectionString = "" +
+                    "Server = localhost;" +
+                    "Port = 5060;" +
+                    "Database = misa.web08.gpbl.tnmanh;" +
+                    "User Id = root;" +
+                    "Password = 140300;";
+                var sqlConnection = new MySqlConnection(connectionString);
+
+                // Chuẩn bị câu lệnh MySQL
+                string storeProcedureName = "Proc_employee_GetPaging";
+
+                // Chèn parameter cho procedure
+                DynamicParameters parameters = new DynamicParameters();
+
+                parameters.Add("v_Offset", offset);
+                parameters.Add("v_Limit", limit);
+                parameters.Add("v_Search", keyword);
+
+                // Thực hiện gọi vào trong Database
+                var employeesFiltered = sqlConnection.QueryMultiple(
+                        storeProcedureName,
+                        parameters,
+                        commandType: System.Data.CommandType.StoredProcedure
+                    );
+
+                // Trả về status code kèm theo object kết quả
+                return StatusCode(StatusCodes.Status200OK, new PagingData()
                 {
-                    new Employee
-                    {
-                        EmployeeID = Guid.NewGuid(),
-                        EmployeeCode = "NV001",
-                        FullName = "Tô Nguyễn Đức Mạnh",
-                        DateOfBirth = DateTime.Now,
-                        Gender = Gender.Male,
-                        EmployeeType = EmployeeType.Customer,
-                        IdentityCard = "034200007684",
-                        IdentityPlace = "CA Thái Bình",
-                        Address = "Tổ dân phố Trung Tiến, Thị trấn Tiền Hải, Tiền Hải, Thái Bình",
-                        PhoneNumberRelative = "00981071321",
-                        PhoneNumberFix = "19001001",
-                        Email = "Ducmanh1403200@gmail.com",
-                        BankAccount = "1201012011",
-                        BankName = "BIDV",
-                        BankBranch = "Chi nhánh Cầu Giấy",
-                        DepartmentID = Guid.NewGuid(),
-                        DepartmentName = "Phòng Công Nghệ Thông Tin",
-                        PositionID = Guid.NewGuid(),
-                        PositionName = "Giám đốc công nghệ",
-                        CreatedDate = DateTime.Now,
-                        CreatedBy = "Liễu Thị Oanh",
-                        ModifiedDate = DateTime.Now,
-                        ModifiedBy = "Nguyễn Hải Nam",
-                    }
-                }
-            });
+                    PageSize = limit,
+                    PageNumber = offset / limit + 1,
+                    Data = employeesFiltered.Read<Employee>().ToList(),
+                    TotalCount = unchecked((int)employeesFiltered.ReadSingle().TotalCount),
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                // Trả về status code kèm theo object thông báo lỗi
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult(
+                    ErrorCode.Exception,
+                    "Has error with server.",
+                    "Có lỗi xảy ra, vui lòng liên hệ với MISA để biết thêm chi tiết.",
+                    "Https://openapi.google.com/api/error-code/e001",
+                    HttpContext.TraceIdentifier
+                    ));
+            }
+
         }
 
         #endregion
@@ -305,7 +338,48 @@ namespace MISA.WEB08.AMIS.API.Controllers
         [HttpDelete("{employeeID}")]
         public IActionResult DeleteEmployee([FromRoute] Guid employeeID)
         {
-            return StatusCode(StatusCodes.Status200OK, employeeID);
+            try
+            {
+                // Tạo connection string
+                string connectionString = "" +
+                    "Server = localhost;" +
+                    "Port = 5060;" +
+                    "Database = misa.web08.gpbl.tnmanh;" +
+                    "User Id = root;" +
+                    "Password = 140300;";
+                var sqlConnection = new MySqlConnection(connectionString);
+
+                // khởi tạo store procedure
+                string storeProcedureName = "Proc_employee_DeleteOne";
+
+                // khởi tạo các parameter truyền vào trong store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("v_id", employeeID);
+
+                // thực hiện truy vấn tới database
+                var deleteOne = sqlConnection.Execute(
+                    storeProcedureName,
+                    parameters,
+                    commandType: System.Data.CommandType.StoredProcedure
+                    );
+
+                // trả về status code và kết quả
+                return StatusCode(StatusCodes.Status200OK, deleteOne);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                // trả về status code và object báo lỗi
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult(
+                    ErrorCode.Exception,
+                    "Has error with server",
+                    "Có lỗi xảy ra, vui lòng liên hệ với quản trị viên MISA.",
+                    "https://openapi.google.com/api/error-code/e001",
+                    HttpContext.TraceIdentifier
+
+                    ));
+            }
         }
 
         #endregion
