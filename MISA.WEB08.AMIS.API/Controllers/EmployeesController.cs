@@ -6,6 +6,7 @@ using MISA.WEB08.AMIS.API.Entities;
 using MISA.WEB08.AMIS.API.Entities.DTO;
 using MISA.WEB08.AMIS.API.Enums;
 using MySqlConnector;
+using System.Text;
 
 namespace MISA.WEB08.AMIS.API.Controllers
 {
@@ -59,7 +60,7 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult
                 (
                     ErrorCode.Exception,
-                   "It was not posible to connect to the redis server(s)",
+                   ex.Message,
                     "Có lỗi xảy ra, vui lòng liên hệ với MISA.",
                     "https://openapi.misa.com.vn/errorcode/e001",
                      HttpContext.TraceIdentifier
@@ -106,7 +107,7 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 // Trả về Status code và object báo lỗi
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult(
                     ErrorCode.Exception,
-                    "Has error for this request",
+                    ex.Message,
                     "Có lỗi xảy ra, vui lòng liên hệ với MISA",
                     "https://openapi.google.com/api/errorcode/e001",
                     HttpContext.TraceIdentifier
@@ -159,7 +160,7 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 // Trả về status code kèm theo kết quả báo lỗi
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult(
                     ErrorCode.Exception,
-                    "Has error with server",
+                    ex.Message,
                     "Có lỗi xảy ra, vui lòng liên hệ với MISA",
                     "https://openapi.google.com/api/error-code/e001",
                     HttpContext.TraceIdentifier
@@ -226,7 +227,7 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 // Trả về status code kèm theo object thông báo lỗi
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult(
                     ErrorCode.Exception,
-                    "Has error with server.",
+                    ex.Message,
                     "Có lỗi xảy ra, vui lòng liên hệ với MISA để biết thêm chi tiết.",
                     "Https://openapi.google.com/api/error-code/e001",
                     HttpContext.TraceIdentifier
@@ -251,48 +252,50 @@ namespace MISA.WEB08.AMIS.API.Controllers
         {
             try
             {
-                // khởi tạo kết nối với DB MySQL
+                // Tạo connection string
                 string connectionString = "" +
                     "Server = localhost;" +
                     "Port = 5060;" +
                     "Database = misa.web08.gpbl.tnmanh;" +
                     "User Id = root;" +
                     "Password = 140300;";
+                
                 var sqlConnection = new MySqlConnection(connectionString);
 
-                // khai báo tên procedure Insert
-                var storeProcedureName = "Prop_employee_Insert";
-                // chuẩn bị tham số đầu vào cho procedure
-                var parameters = new DynamicParameters();
-                var tempEmployeeInsertID = Guid.NewGuid();
-                parameters.Add("v_EmployeeID", tempEmployeeInsertID);
-                parameters.Add("v_EmployeeCode", employee.EmployeeCode);
-                // Thực hiện gọi vào db để chạy procedure
-                var numberOfAffectedRows = sqlConnection.Execute(
-                    storeProcedureName,
-                    parameters,
-                    commandType: System.Data.CommandType.StoredProcedure
-                );
-                // xử lý dữ liệu trả về
-                if (numberOfAffectedRows > 0)
-                {
-                    // thành công
-                    return StatusCode(StatusCodes.Status201Created, tempEmployeeInsertID);
-                }
-                else
-                {
-                    // thất bại
-                    return StatusCode(StatusCodes.Status400BadRequest, new ErrorResult
-                (
-                    ErrorCode.InsertFailed,
-                   "Insert to database return 0",
-                    "Thêm mới nhân viên thất bại",
-                    "https://openapi.misa.com.vn/errorcode/e001",
-                     HttpContext.TraceIdentifier
-                ));
-                }
+                // chuẩn bị câu lệnh MySQL
+                string storeProcedureName = "Proc_employee_PostOne";
 
-                return StatusCode(StatusCodes.Status201Created, employee.EmployeeID);
+                // Truyền tham số vào store procedure
+                DynamicParameters parameters = new DynamicParameters();
+
+                // Tạo ra employeeID bằng guid
+                Guid employeeID = Guid.NewGuid();
+
+                parameters.Add("v_EmployeeID", employeeID);
+
+                // Chèn các giá trị khác vào param cho store procedure
+                var props = typeof(Employee).GetProperties();
+
+                foreach (var prop in props)
+                {
+                    // lấy ra tên của properties
+                    var propName = prop.Name;
+                    var propValue = prop.GetValue(employee);
+                    if(propName != "EmployeeID")
+                    {
+                        parameters.Add($"v_{propName}", propValue);
+                    }
+                }
+                
+                // Thực hiện chèn dữ liệu vào trong database
+                var queryResult = sqlConnection.Execute(
+                        storeProcedureName,
+                        parameters,
+                        commandType: System.Data.CommandType.StoredProcedure
+                    );
+
+                // Trả về kết quả
+                return StatusCode(StatusCodes.Status200OK, queryResult);
             }
             catch (Exception ex)
             {
@@ -300,7 +303,7 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult
                 (
                     ErrorCode.Exception,
-                   "It was not posible to connect to the redis server(s)",
+                    ex.Message,
                     "Có lỗi xảy ra, vui lòng liên hệ với MISA.",
                     "https://openapi.misa.com.vn/errorcode/e001",
                      HttpContext.TraceIdentifier
@@ -322,7 +325,58 @@ namespace MISA.WEB08.AMIS.API.Controllers
         [HttpPut("{employeeID}")]
         public IActionResult UpdateEmployee([FromRoute] Guid employeeID, [FromBody] Employee employee)
         {
-            return StatusCode(StatusCodes.Status200OK, employeeID);
+
+            try
+            {
+                // Tạo connection string
+                string connectionString = "" +
+                    "Server = localhost;" +
+                    "Port = 5060;" +
+                    "Database = misa.web08.gpbl.tnmanh;" +
+                    "User Id = root;" +
+                    "Password = 140300;";
+
+                var sqlConnection = new MySqlConnection(connectionString);
+
+                // chuẩn bị câu lệnh MySQL
+                string storeProcedureName = "Proc_employee_PutOne";
+
+                // Truyền tham số vào store procedure
+                DynamicParameters parameters = new DynamicParameters();
+
+                // Chèn các giá trị khác vào param cho store procedure
+                var props = typeof(Employee).GetProperties();
+
+                foreach (var prop in props)
+                {
+                    // lấy ra tên của properties
+                    var propName = prop.Name;
+                    var propValue = prop.GetValue(employee);
+                    parameters.Add($"v_{propName}", propValue);
+                }
+
+                // Thực hiện chèn dữ liệu vào trong database
+                var queryResult = sqlConnection.Execute(
+                        storeProcedureName,
+                        parameters,
+                        commandType: System.Data.CommandType.StoredProcedure
+                    );
+
+                // Trả về kết quả
+                return StatusCode(StatusCodes.Status200OK, queryResult);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult
+                (
+                    ErrorCode.Exception,
+                    ex.Message,
+                    "Có lỗi xảy ra, vui lòng liên hệ với MISA.",
+                    "https://openapi.misa.com.vn/errorcode/e001",
+                     HttpContext.TraceIdentifier
+                ));
+            }
         }
 
         #endregion
@@ -373,7 +427,7 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 // trả về status code và object báo lỗi
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult(
                     ErrorCode.Exception,
-                    "Has error with server",
+                    ex.Message,
                     "Có lỗi xảy ra, vui lòng liên hệ với quản trị viên MISA.",
                     "https://openapi.google.com/api/error-code/e001",
                     HttpContext.TraceIdentifier
