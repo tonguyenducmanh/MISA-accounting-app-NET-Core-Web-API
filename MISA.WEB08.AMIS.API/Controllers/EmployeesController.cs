@@ -4,10 +4,7 @@ using MISA.Web08.AMIS.API.Enums;
 using MISA.Web08.AMIS.API.Entities.DTO;
 using MISA.WEB08.AMIS.API.Entities;
 using MISA.WEB08.AMIS.API.Entities.DTO;
-using MISA.WEB08.AMIS.API.Enums;
 using MySqlConnector;
-using System.Text;
-using System.Security.AccessControl;
 using MISA.WEB08.AMIS.API.Resources;
 using MISA.WEB08.AMIS.API.CustomAttribute;
 
