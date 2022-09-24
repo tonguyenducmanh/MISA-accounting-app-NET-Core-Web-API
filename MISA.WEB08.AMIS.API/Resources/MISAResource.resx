@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DevMsg_DuplicatedCode" xml:space="preserve">
+    <value>EmployeeCode is existed, please try another code</value>
+    <comment>Thông báo cho dev mã đã bị trùng</comment>
+  </data>
   <data name="DevMsg_Exception" xml:space="preserve">
     <value>Sever has error when try to to this request.</value>
     <comment>Thông báo cho dev có 1 exception</comment>
@@ -125,13 +129,21 @@
     <value>Some fileds of this request is not accepted</value>
     <comment>Thông báo cho dev có 1 lỗi liên quan tới validate</comment>
   </data>
+  <data name="MoreInfo_DupplicatedCode" xml:space="preserve">
+    <value>https://openapi.misa.com/error-code/e002</value>
+    <comment>Trang mô tả chi tiết về mã trùng</comment>
+  </data>
   <data name="MoreInfo_Exception" xml:space="preserve">
     <value>https://openapi.misa.com/error-code/e001</value>
     <comment>Trang mô tả chi tiết về exception</comment>
   </data>
   <data name="MoreInfo_ValidateFailed" xml:space="preserve">
-    <value>https://openapi.misa.com/error-code/e002</value>
+    <value>https://openapi.misa.com/error-code/e003</value>
     <comment>Trang mô tả chi tiết về validate dữ liệu</comment>
+  </data>
+  <data name="UserMsg_DuplicatedCode" xml:space="preserve">
+    <value>Mã nhân viên đã tồn tại trong hệ thống, vui lòng sử dụng mã khác</value>
+    <comment>Thông báo cho người dùng mã đã bị trùng</comment>
   </data>
   <data name="UserMsg_Exception" xml:space="preserve">
     <value>Có lỗi xảy ra, vui lòng liên hệ với MISA để được hỗ trợ.</value>

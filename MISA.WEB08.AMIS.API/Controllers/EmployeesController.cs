@@ -276,6 +276,31 @@ namespace MISA.WEB08.AMIS.API.Controllers
 
                 // Tạo connection
                 var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
+                // Validate xem có bị trùng mã nhân viên không
+                string testProcName = "Proc_employee_GetOneCode";
+                DynamicParameters testParameters = new DynamicParameters();
+                testParameters.Add("v_EmployeeCode", employee.EmployeeCode);
+                // Thực hiện kiểm tra mã nhân viên trong database
+                var testResult = sqlConnection.Query(
+                        testProcName,
+                        testParameters,
+                        commandType: System.Data.CommandType.StoredProcedure
+                    );
+                if(testResult.Count() > 0)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, new ErrorResult(
+                        ErrorCode.DuplicateCode,
+                        MISAResource.DevMsg_DuplicatedCode,
+                        MISAResource.UserMsg_DuplicatedCode,
+                        MISAResource.MoreInfo_DupplicatedCode,
+                        HttpContext.TraceIdentifier
+                        ));
+                }
+                else
+                {
+
+                // Tạo ra employeeID bằng guid
+                Guid employeeID = Guid.NewGuid();
 
                 // chuẩn bị câu lệnh MySQL
                 string storeProcedureName = "Proc_employee_PostOne";
@@ -291,9 +316,6 @@ namespace MISA.WEB08.AMIS.API.Controllers
                     var propValue = prop.GetValue(employee);
                     parameters.Add($"v_{propName}", propValue);
                 }
-                
-                // Tạo ra employeeID bằng guid
-                Guid employeeID = Guid.NewGuid();
 
                 parameters.Add("v_EmployeeID", employeeID);
 
@@ -306,6 +328,7 @@ namespace MISA.WEB08.AMIS.API.Controllers
 
                 // Trả về kết quả
                 return StatusCode(StatusCodes.Status200OK, queryResult);
+                }
             }
             catch (Exception ex)
             {

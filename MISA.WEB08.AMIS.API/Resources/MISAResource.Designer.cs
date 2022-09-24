@@ -61,6 +61,15 @@ namespace MISA.WEB08.AMIS.API.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to EmployeeCode is existed, please try another code.
+        /// </summary>
+        public static string DevMsg_DuplicatedCode {
+            get {
+                return ResourceManager.GetString("DevMsg_DuplicatedCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sever has error when try to to this request..
         /// </summary>
         public static string DevMsg_Exception {
@@ -79,6 +88,15 @@ namespace MISA.WEB08.AMIS.API.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to https://openapi.misa.com/error-code/e002.
+        /// </summary>
+        public static string MoreInfo_DupplicatedCode {
+            get {
+                return ResourceManager.GetString("MoreInfo_DupplicatedCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to https://openapi.misa.com/error-code/e001.
         /// </summary>
         public static string MoreInfo_Exception {
@@ -88,11 +106,20 @@ namespace MISA.WEB08.AMIS.API.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://openapi.misa.com/error-code/e002.
+        ///   Looks up a localized string similar to https://openapi.misa.com/error-code/e003.
         /// </summary>
         public static string MoreInfo_ValidateFailed {
             get {
                 return ResourceManager.GetString("MoreInfo_ValidateFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mã nhân viên đã tồn tại trong hệ thống, vui lòng sử dụng mã khác.
+        /// </summary>
+        public static string UserMsg_DuplicatedCode {
+            get {
+                return ResourceManager.GetString("UserMsg_DuplicatedCode", resourceCulture);
             }
         }
         
