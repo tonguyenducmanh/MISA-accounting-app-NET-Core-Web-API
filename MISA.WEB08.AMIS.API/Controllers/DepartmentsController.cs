@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MISA.Web08.AMIS.API.Entities.DTO;
 using MISA.Web08.AMIS.API.Enums;
 using MISA.WEB08.AMIS.API.Entities;
+using MISA.WEB08.AMIS.API.Resources;
 using MySqlConnector;
 
 namespace MISA.WEB08.AMIS.API.Controllers
@@ -46,10 +47,10 @@ namespace MISA.WEB08.AMIS.API.Controllers
             try
             {
                 // Tạo connection
-                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString(MISAResource.ConnectionString));
 
                 // Chuẩn bị câu lệnh MySQL
-                string storeProcedureName = "Proc_department_GetAll";
+                string storeProcedureName = MISAResource.ProcGetAllDepartment;
 
                 // Thực hiện gọi vào Database
                 var departments = sqlConnection.Query<Department>(
@@ -68,9 +69,9 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult
                     (
                     ErrorCode.Exception,
-                    "Has error when try to request to server.",
-                    "Có lỗi xảy ra, vui lòng liên hệ với MISA.",
-                    "https://openapi.google.com/errorcode/e001",
+                    MISAResource.DevMsg_Exception,
+                    MISAResource.UserMsg_Exception,
+                    MISAResource.MoreInfo_Exception,
                     HttpContext.TraceIdentifier
                     ));
             }

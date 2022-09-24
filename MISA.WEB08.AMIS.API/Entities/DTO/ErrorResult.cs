@@ -31,7 +31,8 @@ namespace MISA.Web08.AMIS.API.Entities.DTO
         /// Thông tin thêm
         /// </summary>
         /// Created by : TNMANH (21/09/2022)
-        public string MoreInfo { get; set; }
+        public dynamic? MoreInfo { get; set; }
+
 
         /// <summary>
         /// ID kết nối để trace sau này để dò lỗi
@@ -51,7 +52,7 @@ namespace MISA.Web08.AMIS.API.Entities.DTO
         /// <param name="traceId">ID kết nối để dò lỗi sau này</param>
         /// Created by : TNMANH (21/09/2022)
 
-        public ErrorResult(ErrorCode errorCode, string devMsg, string userMsg, string moreInfo, string traceId)
+        public ErrorResult(ErrorCode errorCode, string devMsg, string userMsg, dynamic? moreInfo, string traceId)
         {
             ErrorCode = errorCode;
             DevMsg = devMsg;
