@@ -47,10 +47,10 @@ namespace MISA.WEB08.AMIS.API.Controllers
             try
             {
                 // Tạo connection
-                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString(MISAResource.ConnectionString));
 
                 // Chuẩn bị câu lệnh MySQL
-                string storeProcedureName = "Proc_department_GetAll";
+                string storeProcedureName = MISAResource.ProcGetAllDepartment;
 
                 // Thực hiện gọi vào Database
                 var departments = sqlConnection.Query<Department>(

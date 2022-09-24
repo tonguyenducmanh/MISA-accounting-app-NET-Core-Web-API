@@ -61,6 +61,15 @@ namespace MISA.WEB08.AMIS.API.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SecretConnectionString.
+        /// </summary>
+        public static string ConnectionString {
+            get {
+                return ResourceManager.GetString("ConnectionString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to EmployeeCode is existed, please try another code.
         /// </summary>
         public static string DevMsg_DuplicatedCode {
@@ -70,7 +79,7 @@ namespace MISA.WEB08.AMIS.API.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sever has error when try to to this request..
+        ///   Looks up a localized string similar to Sever has error when try to do this request..
         /// </summary>
         public static string DevMsg_Exception {
             get {
@@ -111,6 +120,96 @@ namespace MISA.WEB08.AMIS.API.Resources {
         public static string MoreInfo_ValidateFailed {
             get {
                 return ResourceManager.GetString("MoreInfo_ValidateFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Proc_employee_DeleteOneRecord.
+        /// </summary>
+        public static string ProcDeleteOneEmployee {
+            get {
+                return ResourceManager.GetString("ProcDeleteOneEmployee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Proc_department_GetAll.
+        /// </summary>
+        public static string ProcGetAllDepartment {
+            get {
+                return ResourceManager.GetString("ProcGetAllDepartment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Proc_employee_GetAll.
+        /// </summary>
+        public static string ProcGetAllEmployee {
+            get {
+                return ResourceManager.GetString("ProcGetAllEmployee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Proc_positions_GetAll.
+        /// </summary>
+        public static string ProcGetAllPosition {
+            get {
+                return ResourceManager.GetString("ProcGetAllPosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Proc_employee_GetDuplicateCode.
+        /// </summary>
+        public static string ProcGetDupplicateCode {
+            get {
+                return ResourceManager.GetString("ProcGetDupplicateCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Proc_employee_GetByID.
+        /// </summary>
+        public static string ProcGetEmployeeByID {
+            get {
+                return ResourceManager.GetString("ProcGetEmployeeByID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Proc_employee_GetPaging.
+        /// </summary>
+        public static string ProcGetEmployeeFilter {
+            get {
+                return ResourceManager.GetString("ProcGetEmployeeFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Proc_employee_GetMaxCode.
+        /// </summary>
+        public static string ProcGetMaxEmployeeCode {
+            get {
+                return ResourceManager.GetString("ProcGetMaxEmployeeCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Proc_employee_PostOneRecord.
+        /// </summary>
+        public static string ProcPostNewEmployee {
+            get {
+                return ResourceManager.GetString("ProcPostNewEmployee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Proc_employee_PutOneRecord.
+        /// </summary>
+        public static string ProcPutOneEmployee {
+            get {
+                return ResourceManager.GetString("ProcPutOneEmployee", resourceCulture);
             }
         }
         

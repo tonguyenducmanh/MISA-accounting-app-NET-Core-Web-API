@@ -55,10 +55,10 @@ namespace MISA.WEB08.AMIS.API.Controllers
             try
             {
                 // Tạo connection
-                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString(MISAResource.ConnectionString));
 
                 // chuẩn bị câu lệnh MySQL
-                string storeProcedureName = "Proc_employee_GetAll";
+                string storeProcedureName = MISAResource.ProcGetAllEmployee;
 
 
                 // thực hiện gọi vào DB
@@ -95,10 +95,10 @@ namespace MISA.WEB08.AMIS.API.Controllers
             try
             {
                 // Tạo connection
-                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString(MISAResource.ConnectionString));
 
                 // Chuẩn bị câu lệnh Query
-                string storeProcedureName = "Proc_employee_GetMaxCode";
+                string storeProcedureName = MISAResource.ProcGetMaxEmployeeCode;
 
                 // Thực hiện gọi vào Database
                 var maxCode = sqlConnection.QueryFirstOrDefault<String>(
@@ -136,10 +136,10 @@ namespace MISA.WEB08.AMIS.API.Controllers
             try
             {
                 // Tạo connection
-                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString(MISAResource.ConnectionString));
 
                 // Khai báo procedure name
-                string storeProcedureName = "Proc_employee_GetOne";
+                string storeProcedureName = MISAResource.ProcGetEmployeeByID;
 
                 // Khởi tạo các parameter để chèn vào trong storeprocedure
                 DynamicParameters parameters = new DynamicParameters();
@@ -189,10 +189,10 @@ namespace MISA.WEB08.AMIS.API.Controllers
             try
             {
                 // Tạo connection
-                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString(MISAResource.ConnectionString));
 
                 // Chuẩn bị câu lệnh MySQL
-                string storeProcedureName = "Proc_employee_GetPaging";
+                string storeProcedureName = MISAResource.ProcGetEmployeeFilter;
 
                 // Chèn parameter cho procedure
                 DynamicParameters parameters = new DynamicParameters();
@@ -275,9 +275,9 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 }
 
                 // Tạo connection
-                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString(MISAResource.ConnectionString));
                 // Validate xem có bị trùng mã nhân viên không
-                string testProcName = "Proc_employee_GetOneCode";
+                string testProcName = MISAResource.ProcGetDupplicateCode;
                 DynamicParameters testParameters = new DynamicParameters();
                 testParameters.Add("v_EmployeeCode", employee.EmployeeCode);
                 // Thực hiện kiểm tra mã nhân viên trong database
@@ -303,7 +303,7 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 Guid employeeID = Guid.NewGuid();
 
                 // chuẩn bị câu lệnh MySQL
-                string storeProcedureName = "Proc_employee_PostOne";
+                string storeProcedureName = MISAResource.ProcPostNewEmployee;
 
                 // Truyền tham số vào store procedure
                 DynamicParameters parameters = new DynamicParameters();
@@ -387,10 +387,10 @@ namespace MISA.WEB08.AMIS.API.Controllers
                         ));
                 }
                 // Tạo connection
-                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString(MISAResource.ConnectionString));
 
                 // chuẩn bị câu lệnh MySQL
-                string storeProcedureName = "Proc_employee_PutOne";
+                string storeProcedureName = MISAResource.ProcPutOneEmployee;
 
                 // Truyền tham số vào store procedure
                 DynamicParameters parameters = new DynamicParameters();
@@ -444,10 +444,10 @@ namespace MISA.WEB08.AMIS.API.Controllers
             try
             {
                 // Tạo connection
-                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString(MISAResource.ConnectionString));
 
                 // khởi tạo store procedure
-                string storeProcedureName = "Proc_employee_DeleteOne";
+                string storeProcedureName = MISAResource.ProcDeleteOneEmployee;
 
                 // khởi tạo các parameter truyền vào trong store procedure
                 DynamicParameters parameters = new DynamicParameters();

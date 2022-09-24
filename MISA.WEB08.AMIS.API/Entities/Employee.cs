@@ -67,12 +67,12 @@ namespace MISA.WEB08.AMIS.API.Entities
         /// <summary>
         /// Số điện thoại di động của nhân viên
         /// </summary>
-        public string PhoneNumberRelative { get; set; }
+        public string MobilePhone { get; set; }
 
         /// <summary>
         /// Số điện thoại cố định của nhân viên
         /// </summary>
-        public string PhoneNumberFix { get; set; }
+        public string Telephone { get; set; }
 
         /// <summary>
         /// Địa chỉ Email của nhân viên
