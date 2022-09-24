@@ -16,6 +16,22 @@ namespace MISA.WEB08.AMIS.API.Controllers
     [ApiController]
     public class PositionsController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
+
+        /// <summary>
+        /// Hàm khởi tạo để gọi configuration để lấy được connection string
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// Created by : TNMANH (24/09/2022)
+        #region Contructor
+
+        public PositionsController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        #endregion
+
         #region method GET
         /// <summary>
         /// Lấy danh sách tất cả các chức vụ
@@ -28,14 +44,8 @@ namespace MISA.WEB08.AMIS.API.Controllers
         {
             try
             {
-                // Tạo ra connection string
-                string connectionString = "" +
-                       "Server = localhost;" +
-                       "Port = 5060;" +
-                       "Database = misa.web08.gpbl.tnmanh;" +
-                       "User Id = root;" +
-                       "Password = 140300;";
-                var sqlConnection = new MySqlConnection(connectionString);
+                // Tạo ra connection
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
 
                 // Chuẩn bị câu lệnh MySQL
                 string storeProcedureName = "Proc_positions_GetAll";
