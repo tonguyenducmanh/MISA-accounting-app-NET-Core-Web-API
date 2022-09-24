@@ -7,6 +7,7 @@ using MISA.WEB08.AMIS.API.Entities.DTO;
 using MISA.WEB08.AMIS.API.Enums;
 using MySqlConnector;
 using System.Text;
+using System.Security.AccessControl;
 
 namespace MISA.WEB08.AMIS.API.Controllers
 {
@@ -18,6 +19,25 @@ namespace MISA.WEB08.AMIS.API.Controllers
     [ApiController]
     public class EmployeesController : ControllerBase
     {
+
+        private readonly IConfiguration _configuration;
+
+
+        /// <summary>
+        /// Hàm khởi tạo để truyền configuration dùng để get connection string từ file
+        /// appsettings.json
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// Created by : TNMANH (24/09/2022)
+        #region Constructor
+
+        public EmployeesController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        #endregion
+
         // Danh sách các API liên quan tới việc lấy thông tin của nhân viên
         #region GetMethod
 
@@ -32,14 +52,8 @@ namespace MISA.WEB08.AMIS.API.Controllers
 
             try
             {
-                // Tạo connection string
-                string connectionString = "" +
-                    "Server = localhost;" +
-                    "Port = 5060;" +
-                    "Database = misa.web08.gpbl.tnmanh;" +
-                    "User Id = root;" +
-                    "Password = 140300;";
-                var sqlConnection = new MySqlConnection(connectionString);
+                // Tạo connection
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
 
                 // chuẩn bị câu lệnh MySQL
                 string storeProcedureName = "Proc_employee_GetAll";
@@ -78,15 +92,8 @@ namespace MISA.WEB08.AMIS.API.Controllers
         {
             try
             {
-                // Tạo connection string
-                string connectionString = "" +
-                "Server = localhost;" +
-                "Port = 5060;" +
-                "Database = misa.web08.gpbl.tnmanh;" +
-                "User Id = root;" +
-                "Password = 140300;";
-
-                var sqlConnection = new MySqlConnection(connectionString);
+                // Tạo connection
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
 
                 // Chuẩn bị câu lệnh Query
                 string storeProcedureName = "Proc_employee_GetMaxCode";
@@ -126,14 +133,8 @@ namespace MISA.WEB08.AMIS.API.Controllers
         {
             try
             {
-                // Tạo connection String
-                string connectionString = "" +
-                    "Server = localhost;" +
-                    "Port = 5060;" +
-                    "Database = misa.web08.gpbl.tnmanh;" +
-                    "User Id = root;" +
-                    "Password = 140300;";
-                var sqlConnection = new MySqlConnection(connectionString);
+                // Tạo connection
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
 
                 // Khai báo procedure name
                 string storeProcedureName = "Proc_employee_GetOne";
@@ -185,14 +186,8 @@ namespace MISA.WEB08.AMIS.API.Controllers
         {
             try
             {
-                // Tạo connection string
-                string connectionString = "" +
-                    "Server = localhost;" +
-                    "Port = 5060;" +
-                    "Database = misa.web08.gpbl.tnmanh;" +
-                    "User Id = root;" +
-                    "Password = 140300;";
-                var sqlConnection = new MySqlConnection(connectionString);
+                // Tạo connection
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
 
                 // Chuẩn bị câu lệnh MySQL
                 string storeProcedureName = "Proc_employee_GetPaging";
@@ -252,15 +247,8 @@ namespace MISA.WEB08.AMIS.API.Controllers
         {
             try
             {
-                // Tạo connection string
-                string connectionString = "" +
-                    "Server = localhost;" +
-                    "Port = 5060;" +
-                    "Database = misa.web08.gpbl.tnmanh;" +
-                    "User Id = root;" +
-                    "Password = 140300;";
-                
-                var sqlConnection = new MySqlConnection(connectionString);
+                // Tạo connection
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
 
                 // chuẩn bị câu lệnh MySQL
                 string storeProcedureName = "Proc_employee_PostOne";
@@ -328,15 +316,8 @@ namespace MISA.WEB08.AMIS.API.Controllers
 
             try
             {
-                // Tạo connection string
-                string connectionString = "" +
-                    "Server = localhost;" +
-                    "Port = 5060;" +
-                    "Database = misa.web08.gpbl.tnmanh;" +
-                    "User Id = root;" +
-                    "Password = 140300;";
-
-                var sqlConnection = new MySqlConnection(connectionString);
+                // Tạo connection
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
 
                 // chuẩn bị câu lệnh MySQL
                 string storeProcedureName = "Proc_employee_PutOne";
@@ -394,14 +375,8 @@ namespace MISA.WEB08.AMIS.API.Controllers
         {
             try
             {
-                // Tạo connection string
-                string connectionString = "" +
-                    "Server = localhost;" +
-                    "Port = 5060;" +
-                    "Database = misa.web08.gpbl.tnmanh;" +
-                    "User Id = root;" +
-                    "Password = 140300;";
-                var sqlConnection = new MySqlConnection(connectionString);
+                // Tạo connection
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
 
                 // khởi tạo store procedure
                 string storeProcedureName = "Proc_employee_DeleteOne";
