@@ -4,10 +4,7 @@ using MISA.Web08.AMIS.API.Enums;
 using MISA.Web08.AMIS.API.Entities.DTO;
 using MISA.WEB08.AMIS.API.Entities;
 using MISA.WEB08.AMIS.API.Entities.DTO;
-using MISA.WEB08.AMIS.API.Enums;
 using MySqlConnector;
-using System.Text;
-using System.Security.AccessControl;
 using MISA.WEB08.AMIS.API.Resources;
 using MISA.WEB08.AMIS.API.CustomAttribute;
 
@@ -182,8 +179,8 @@ namespace MISA.WEB08.AMIS.API.Controllers
         [HttpGet("filter")]
         public IActionResult FilterEmployee(
             [FromQuery] string? keyword,
-            [FromQuery] int? limit,
-            [FromQuery] int? offset
+            [FromQuery] int? pageNumber,
+            [FromQuery] int? pageSize
             )
         {
             try
@@ -197,8 +194,8 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 // Chèn parameter cho procedure
                 DynamicParameters parameters = new DynamicParameters();
 
-                parameters.Add("v_Offset", offset);
-                parameters.Add("v_Limit", limit);
+                parameters.Add("v_PageNumber", pageNumber);
+                parameters.Add("v_PageSize", pageSize);
                 parameters.Add("v_Search", keyword);
 
                 // Thực hiện gọi vào trong Database
@@ -211,8 +208,8 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 // Trả về status code kèm theo object kết quả
                 return StatusCode(StatusCodes.Status200OK, new PagingData()
                 {
-                    PageSize = limit,
-                    PageNumber = offset / limit + 1,
+                    PageSize = pageSize,
+                    PageNumber = pageNumber,
                     Data = employeesFiltered.Read<Employee>().ToList(),
                     TotalCount = unchecked((int)employeesFiltered.ReadSingle().TotalCount),
                 });
