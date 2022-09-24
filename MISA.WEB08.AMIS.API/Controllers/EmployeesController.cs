@@ -8,6 +8,8 @@ using MISA.WEB08.AMIS.API.Enums;
 using MySqlConnector;
 using System.Text;
 using System.Security.AccessControl;
+using MISA.WEB08.AMIS.API.Resources;
+using MISA.WEB08.AMIS.API.CustomAttribute;
 
 namespace MISA.WEB08.AMIS.API.Controllers
 {
@@ -74,10 +76,10 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult
                 (
                     ErrorCode.Exception,
-                   ex.Message,
-                    "Có lỗi xảy ra, vui lòng liên hệ với MISA.",
-                    "https://openapi.misa.com.vn/errorcode/e001",
-                     HttpContext.TraceIdentifier
+                    MISAResource.DevMsg_Exception,
+                    MISAResource.UserMsg_Exception,
+                    MISAResource.MoreInfo_Exception,
+                    HttpContext.TraceIdentifier
                 ));
             }
         }
@@ -114,9 +116,9 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 // Trả về Status code và object báo lỗi
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult(
                     ErrorCode.Exception,
-                    ex.Message,
-                    "Có lỗi xảy ra, vui lòng liên hệ với MISA",
-                    "https://openapi.google.com/api/errorcode/e001",
+                    MISAResource.DevMsg_Exception,
+                    MISAResource.UserMsg_Exception,
+                    MISAResource.MoreInfo_Exception,
                     HttpContext.TraceIdentifier
                     ));
             }
@@ -161,9 +163,9 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 // Trả về status code kèm theo kết quả báo lỗi
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult(
                     ErrorCode.Exception,
-                    ex.Message,
-                    "Có lỗi xảy ra, vui lòng liên hệ với MISA",
-                    "https://openapi.google.com/api/error-code/e001",
+                    MISAResource.DevMsg_Exception, 
+                    MISAResource.UserMsg_Exception, 
+                    MISAResource.MoreInfo_Exception,
                     HttpContext.TraceIdentifier
                     ));
             }
@@ -221,12 +223,11 @@ namespace MISA.WEB08.AMIS.API.Controllers
 
                 // Trả về status code kèm theo object thông báo lỗi
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult(
-                    ErrorCode.Exception,
-                    ex.Message,
-                    "Có lỗi xảy ra, vui lòng liên hệ với MISA để biết thêm chi tiết.",
-                    "Https://openapi.google.com/api/error-code/e001",
-                    HttpContext.TraceIdentifier
-                    ));
+                    ErrorCode.Exception, 
+                    MISAResource.DevMsg_Exception, 
+                    MISAResource.UserMsg_Exception, 
+                    MISAResource.MoreInfo_Exception, 
+                    HttpContext.TraceIdentifier));
             }
 
         }
@@ -247,6 +248,32 @@ namespace MISA.WEB08.AMIS.API.Controllers
         {
             try
             {
+                // Validate dữ liệu đầu vào
+                var props = typeof(Employee).GetProperties();
+                List<string> validateFailed = new List<string>();
+                foreach(var prop in props)
+                {
+                    var propName = prop.Name;
+                    var propValue = prop.GetValue(employee);
+                    var mustHave = (MustHave?)Attribute.GetCustomAttribute(prop, typeof(MustHave));
+                    if(mustHave != null && string.IsNullOrEmpty(propValue?.ToString()))
+                    {
+                        validateFailed.Add(mustHave.ErrorMessage);
+                    }
+                }
+
+                // Check xem nếu có lỗi văng ra kết quả luôn khỏi chạy đoạn dưới
+                if(validateFailed.Count > 0)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, new ErrorResult(
+                        ErrorCode.EmptyCode,
+                        MISAResource.DevMsg_ValidateFailed,
+                        MISAResource.UserMsg_ValidateFailed,
+                        validateFailed,
+                        HttpContext.TraceIdentifier
+                        ));
+                }
+
                 // Tạo connection
                 var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
 
@@ -256,25 +283,20 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 // Truyền tham số vào store procedure
                 DynamicParameters parameters = new DynamicParameters();
 
-                // Tạo ra employeeID bằng guid
-                Guid employeeID = Guid.NewGuid();
-
-                parameters.Add("v_EmployeeID", employeeID);
-
                 // Chèn các giá trị khác vào param cho store procedure
-                var props = typeof(Employee).GetProperties();
-
                 foreach (var prop in props)
                 {
                     // lấy ra tên của properties
                     var propName = prop.Name;
                     var propValue = prop.GetValue(employee);
-                    if(propName != "EmployeeID")
-                    {
-                        parameters.Add($"v_{propName}", propValue);
-                    }
+                    parameters.Add($"v_{propName}", propValue);
                 }
                 
+                // Tạo ra employeeID bằng guid
+                Guid employeeID = Guid.NewGuid();
+
+                parameters.Add("v_EmployeeID", employeeID);
+
                 // Thực hiện chèn dữ liệu vào trong database
                 var queryResult = sqlConnection.Execute(
                         storeProcedureName,
@@ -291,9 +313,9 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult
                 (
                     ErrorCode.Exception,
-                    ex.Message,
-                    "Có lỗi xảy ra, vui lòng liên hệ với MISA.",
-                    "https://openapi.misa.com.vn/errorcode/e001",
+                    MISAResource.DevMsg_Exception,
+                    MISAResource.UserMsg_Exception,
+                    MISAResource.MoreInfo_Exception,
                      HttpContext.TraceIdentifier
                 ));
             }
@@ -316,6 +338,31 @@ namespace MISA.WEB08.AMIS.API.Controllers
 
             try
             {
+                // Validate dữ liệu đầu vào
+                var props = typeof(Employee).GetProperties();
+                List<string> validateFailed = new List<string>();
+                foreach (var prop in props)
+                {
+                    var propName = prop.Name;
+                    var propValue = prop.GetValue(employee);
+                    var mustHave = (MustHave?)Attribute.GetCustomAttribute(prop, typeof(MustHave));
+                    if (mustHave != null && string.IsNullOrEmpty(propValue?.ToString()))
+                    {
+                        validateFailed.Add(mustHave.ErrorMessage);
+                    }
+                }
+
+                // Check xem nếu có lỗi văng ra kết quả luôn khỏi chạy đoạn dưới
+                if (validateFailed.Count > 0)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, new ErrorResult(
+                        ErrorCode.EmptyCode,
+                        MISAResource.DevMsg_ValidateFailed,
+                        MISAResource.UserMsg_ValidateFailed,
+                        validateFailed,
+                        HttpContext.TraceIdentifier
+                        ));
+                }
                 // Tạo connection
                 var sqlConnection = new MySqlConnection(_configuration.GetConnectionString("SecretConnectionString"));
 
@@ -326,8 +373,6 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 DynamicParameters parameters = new DynamicParameters();
 
                 // Chèn các giá trị khác vào param cho store procedure
-                var props = typeof(Employee).GetProperties();
-
                 foreach (var prop in props)
                 {
                     // lấy ra tên của properties
@@ -352,9 +397,9 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult
                 (
                     ErrorCode.Exception,
-                    ex.Message,
-                    "Có lỗi xảy ra, vui lòng liên hệ với MISA.",
-                    "https://openapi.misa.com.vn/errorcode/e001",
+                    MISAResource.DevMsg_Exception,
+                    MISAResource.UserMsg_Exception, 
+                    MISAResource.MoreInfo_Exception,
                      HttpContext.TraceIdentifier
                 ));
             }
@@ -402,9 +447,9 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 // trả về status code và object báo lỗi
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult(
                     ErrorCode.Exception,
-                    ex.Message,
-                    "Có lỗi xảy ra, vui lòng liên hệ với quản trị viên MISA.",
-                    "https://openapi.google.com/api/error-code/e001",
+                    MISAResource.DevMsg_Exception,
+                    MISAResource.UserMsg_Exception,
+                    MISAResource.MoreInfo_Exception,
                     HttpContext.TraceIdentifier
 
                     ));

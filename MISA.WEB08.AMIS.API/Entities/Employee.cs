@@ -1,4 +1,5 @@
-﻿using MISA.WEB08.AMIS.API.Enums;
+﻿using MISA.WEB08.AMIS.API.CustomAttribute;
+using MISA.WEB08.AMIS.API.Enums;
 
 namespace MISA.WEB08.AMIS.API.Entities
 {
@@ -13,16 +14,19 @@ namespace MISA.WEB08.AMIS.API.Entities
         /// <summary>
         /// ID của nhân viên
         /// </summary>
+        [PrimaryKey]
         public Guid EmployeeID { get; set; }
 
         /// <summary>
         /// Mã của nhân viên
         /// </summary>
+        [MustHave("Mã nhân viên không được để trống")]
         public string EmployeeCode { get; set; }
 
         /// <summary>
         /// Họ và tên của nhân viên
         /// </summary>
+        [MustHave("Tên nhân viên không được để trống")]
         public string FullName { get; set; }
 
         /// <summary>
@@ -93,6 +97,7 @@ namespace MISA.WEB08.AMIS.API.Entities
         /// <summary>
         /// ID của đơn vị
         /// </summary>
+        [MustHave("ID phòng ban không được để trống")]
         public Guid DepartmentID { get; set; }
 
         /// <summary>

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MISA.Web08.AMIS.API.Entities.DTO;
 using MISA.Web08.AMIS.API.Enums;
 using MISA.WEB08.AMIS.API.Entities;
+using MISA.WEB08.AMIS.API.Resources;
 using MySqlConnector;
 
 namespace MISA.WEB08.AMIS.API.Controllers
@@ -66,9 +67,9 @@ namespace MISA.WEB08.AMIS.API.Controllers
                 // Trả về status lỗi kèm theo object thông báo lỗi ErrorResult
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult(
                     ErrorCode.Exception,
-                    "Has error when try to request to server.",
-                    "Có lỗi xảy ra, vui lòng liên hệ với MISA",
-                    "https://openapu.google.com/errorcode/e001",
+                    MISAResource.DevMsg_Exception,
+                    MISAResource.UserMsg_Exception,
+                    MISAResource.MoreInfo_Exception,
                     HttpContext.TraceIdentifier
                     ));
             }
