@@ -11,7 +11,12 @@
         /// <summary>
         /// Tổng số bảng ghi phù hợp kết quả filter
         /// </summary>
-        public int? TotalCount { get; set; }
+        public int? TotalRecord { get; set; }
+        
+        /// <summary>
+        /// Tổng số trang
+        /// </summary>
+        public int? TotalPage { get; set; }
 
         /// <summary>
         /// Số lượng bản ghi trên 1 trang
@@ -21,7 +26,7 @@
         /// <summary>
         /// Số của trang hiện tại
         /// </summary>
-        public int? PageNumber { get; set; }
+        public int? CurrentPage { get; set; }
 
         /// <summary>
         /// Danh sách nhân viên thỏa mãn điều kiện tìm kiếm
