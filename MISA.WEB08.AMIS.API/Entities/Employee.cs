@@ -15,7 +15,7 @@ namespace MISA.WEB08.AMIS.API.Entities
         /// ID của nhân viên
         /// </summary>
         [PrimaryKey]
-        public Guid EmployeeID { get; set; }
+        public Guid? EmployeeID { get; set; }
 
         /// <summary>
         /// Mã của nhân viên
@@ -32,7 +32,7 @@ namespace MISA.WEB08.AMIS.API.Entities
         /// <summary>
         /// Ngày sinh của nhân viên
         /// </summary>
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         /// <summary>
         /// Giới tính của nhân viên
@@ -47,52 +47,52 @@ namespace MISA.WEB08.AMIS.API.Entities
         /// <summary>
         /// Căn cước công dân / chứng minh thư
         /// </summary>
-        public string IdentityCard { get; set; }
+        public string? IdentityCard { get; set; }
 
         /// <summary>
         /// Ngày cấp Căn cước công dân / chứng minh thư
         /// </summary>
-        public DateTime IdentityDate { get; set; }
+        public DateTime? IdentityDate { get; set; }
 
         /// <summary>
         /// Nơi cấp căn cước công dân / chứng minh thư
         /// </summary>
-        public string IdentityPlace { get; set; }
+        public string? IdentityPlace { get; set; }
 
         /// <summary>
         /// Địa chỉ của nhân viên
         /// </summary>
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
         /// <summary>
         /// Số điện thoại di động của nhân viên
         /// </summary>
-        public string MobilePhone { get; set; }
+        public string? MobilePhone { get; set; }
 
         /// <summary>
         /// Số điện thoại cố định của nhân viên
         /// </summary>
-        public string Telephone { get; set; }
+        public string? Telephone { get; set; }
 
         /// <summary>
         /// Địa chỉ Email của nhân viên
         /// </summary>
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         /// <summary>
         /// Số tài khoản ngân hàng của nhân viên
         /// </summary>
-        public string BankAccount { get; set; }
+        public string? BankAccount { get; set; }
 
         /// <summary>
         /// Tên ngân hàng
         /// </summary>
-        public string BankName { get; set; }
+        public string? BankName { get; set; }
 
         /// <summary>
         /// Chi nhánh của ngân hàng
         /// </summary>
-        public string BankBranch { get; set; }
+        public string? BankBranch { get; set; }
 
         /// <summary>
         /// ID của đơn vị
@@ -108,32 +108,32 @@ namespace MISA.WEB08.AMIS.API.Entities
         /// <summary>
         /// ID của chức danh
         /// </summary>
-        public Guid PositionID { get; set; }
+        public Guid? PositionID { get; set; }
 
         /// <summary>
         /// Tên chức danh
         /// </summary>
-        public string PositionName { get; set; }
+        public string? PositionName { get; set; }
 
         /// <summary>
         /// Ngày tạo nhân viên
         /// </summary>
-        public DateTime CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
 
         /// <summary>
         /// Người tạo nhân viên
         /// </summary>
-        public string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
 
         /// <summary>
         /// Ngày sửa gần nhất
         /// </summary>
-        public DateTime ModifiedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
 
         /// <summary>
         /// Người sửa gần nhất
         /// </summary>
-        public string ModifiedBy { get; set; } 
+        public string? ModifiedBy { get; set; } 
 
         #endregion
     }
