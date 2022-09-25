@@ -82,6 +82,51 @@ namespace MISA.WEB08.AMIS.API.Controllers
         }
 
         /// <summary>
+        /// API check trùng mã nhân viên
+        /// </summary>
+        /// <returns>Records có mã nhân viên trùng</returns>
+        /// Created by : TNMANH (25/09/2022)
+        [HttpGet("duplicate-code")]
+        public IActionResult GetDuplicateCode(string EmployeeCode)
+        {
+            try
+            {
+                // Tạo connection
+                var sqlConnection = new MySqlConnection(_configuration.GetConnectionString(MISAResource.ConnectionString));
+
+                // Chuẩn bị câu lệnh Query
+                string storeProcedureName = MISAResource.ProcGetDupplicateCode;
+
+                // Thêm param
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("v_EmployeeCode", EmployeeCode);
+
+                // Thực hiện gọi vào Database
+                var maxCode = sqlConnection.QueryFirstOrDefault<Employee>(
+                    storeProcedureName,
+                    parameters,
+                    commandType: System.Data.CommandType.StoredProcedure
+                    );
+
+                // Trả về Status code và kết quả
+                return StatusCode(StatusCodes.Status200OK, maxCode);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                // Trả về Status code và object báo lỗi
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResult(
+                    ErrorCode.Exception,
+                    MISAResource.DevMsg_Exception,
+                    MISAResource.UserMsg_Exception,
+                    MISAResource.MoreInfo_Exception,
+                    HttpContext.TraceIdentifier
+                    ));
+            }
+        }       
+        
+        /// <summary>
         /// API lấy mã nhân viên lớn nhất
         /// </summary>
         /// <returns>Mã nhân viên lớn nhất</returns>
@@ -205,13 +250,17 @@ namespace MISA.WEB08.AMIS.API.Controllers
                         commandType: System.Data.CommandType.StoredProcedure
                     );
 
+                var employees = employeesFiltered.Read<Employee>().ToList();
+                var totalRecord = (int)employeesFiltered.ReadSingle().TotalCount;
+
                 // Trả về status code kèm theo object kết quả
                 return StatusCode(StatusCodes.Status200OK, new PagingData()
                 {
                     PageSize = pageSize,
-                    PageNumber = pageNumber,
-                    Data = employeesFiltered.Read<Employee>().ToList(),
-                    TotalCount = unchecked((int)employeesFiltered.ReadSingle().TotalCount),
+                    CurrentPage = pageNumber,
+                    TotalPage = (int)Math.Ceiling( Convert.ToDecimal(totalRecord / pageSize) +1),
+                    Data = employees,
+                    TotalRecord = totalRecord,
                 });
             }
             catch (Exception ex)
